@@ -1,6 +1,8 @@
 import networkx as nx
+import time
 
 def twiceAroundTheTree(G):
+    start_time = time.time()
     mst = nx.minimum_spanning_tree(G)
     
     caminho = list(nx.dfs_preorder_nodes(mst,source=list(mst.nodes)[0]))
@@ -8,10 +10,13 @@ def twiceAroundTheTree(G):
     count = 0
     for i in range(0,len(caminho)-1):
         count += G[caminho[i]][caminho[i+1]]['weight']
-    return count,caminho
+    end_time = time.time()
+    execution_time = end_time - start_time
+    return count,caminho,execution_time
         
 
 def christofides(G):
+    start_time = time.time()
     mst = nx.minimum_spanning_tree(G)
 
     oddDegree = [v for v, d in mst.degree() if d % 2 == 1]
@@ -26,6 +31,8 @@ def christofides(G):
     count = 0
     for i in range(0,len(caminho)-1):
         count += G[caminho[i]][caminho[i+1]]['weight']
-    return count,caminho
+    end_time = time.time()
+    execution_time = end_time - start_time
+    return count,caminho,execution_time
     
     
