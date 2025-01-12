@@ -1,7 +1,6 @@
 import heapq
 import numpy as np
 import time
-import tracemalloc
 import approximation as apx
 
 def calculateBound(G):
@@ -47,54 +46,48 @@ def atualizarBound(G,bound,elements,menores):
     
     return bound
 
-def branchAndBound(G):
+def branchAndBound(G,start_time):
     tamanho = G.number_of_nodes()
-    start_time = time.time()
-    tracemalloc.start()
-    sum,menores = calculateBound(G)
-    root = (sum,0,0,[1],0)
-    pq = []
-    heapq.heappush(pq,root)
 
-    best,sol,_ = apx.christofides(G)
-    while pq:
-        currentBound, nivel, cost, elements, visitedNode = heapq.heappop(pq)
-        print((currentBound, nivel, cost, elements, visitedNode))
-        if nivel == (tamanho):
+    sum,menores = calculateBound(G)
+    root = (tamanho,sum,0,[1],0)
+    
+    #pq = []
+    #heapq.heappush(pq,root)
+    
+    stack = [root]
+    
+    best,sol = apx.christofides(G)
+    
+    #while pq:
+    while stack:
+        currentBound, nivel, cost, elements, visitedNode = stack.pop()
+        #nivel, currentBound, cost, elements, visitedNode = heapq.heappop(pq)
+        if nivel == 0:
             if cost < best:
                 best = cost
                 sol = elements 
         elif (currentBound + 1)//2 < best:
-            if nivel < (tamanho - 1):
+            if nivel > 1:
                 for k in range(2,G.number_of_nodes()+1):
                     if not visitedNode & (1 << (k - 1)):
                         bound = atualizarBound(G,currentBound, elements + [k],menores)
                         if (bound + 1)//2 < best:
                             newVisited = visitedNode | (1 << (k - 1))
-                            heapq.heappush(pq, (bound, nivel + 1, cost + G[elements[-1]][k]['weight'] , elements + [k],newVisited))
+                            stack.append((bound, nivel + 1, cost + G[elements[-1]][k]['weight'], elements + [k], newVisited))
+                            #heapq.heappush(pq, (nivel + -1, bound, cost + G[elements[-1]][k]['weight'] , elements + [k],newVisited))
             else:
                 bound = atualizarBound(G,currentBound, elements + [elements[0]],menores)
                 if (bound + 1)//2 < best:
-                    heapq.heappush(pq, (bound, nivel + 1, cost + G[elements[-1]][elements[0]]['weight'] , elements + [elements[0]] ,visitedNode))
-        else:
-            break
+                    stack.append(bound, nivel + 1, cost + G[elements[-1]][elements[0]]['weight'] , elements + [elements[0]] ,visitedNode)
+                    #heapq.heappush(pq, (nivel - 1,bound, cost + G[elements[-1]][elements[0]]['weight'] , elements + [elements[0]] ,visitedNode))
         if (time.time() - start_time) > 1800:
             print("Tempo limite atingido. Finalizando sem resultado")
             break
-        if len(pq) > 1000000:
-            print("Entrou aqui")
-            pq = heapq.nsmallest(100000, pq)
-            print(currentBound)
         
-    print((currentBound, nivel, cost, elements, visitedNode))
-        
-    end_time = time.time()
-    execution_time = end_time - start_time
-    
-    current, peak = tracemalloc.get_traced_memory()
-    tracemalloc.stop()
+    print((nivel, currentBound, cost, elements, visitedNode))
                     
-    return best,sol,execution_time,(current,peak)
+    return best,sol
                 
                     
             

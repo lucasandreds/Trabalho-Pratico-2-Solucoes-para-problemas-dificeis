@@ -1,12 +1,41 @@
-import numpy as np
-import scipy as sp
-import pandas as pd
-import networkx as nx
 import branchAndBound as bb
 import approximation as apx
 import tsplib95
+import time
+import tracemalloc
 
 def readExampleChristofides(name,perfectValue,arquivo):
+    print(name)
+    start_time = time.time()
+    tracemalloc.start()  
+    arquivo.write(f"Problema: {name}\n")
+    problem = tsplib95.load(f"exemplos/{name}.tsp")
+    G = problem.get_graph()
+    G = G.to_undirected()
+    for u,v,data in G.edges(data = True):
+        G[u][v]['weight'] = problem.get_weight(u,v)  
+    best,sol = apx.christofides(G)
+    
+    end_time = time.time()
+    execution_time = end_time - start_time
+    current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()    
+    
+    if execution_time <= 1800: 
+        arquivo.write(f"Resultado Christofides: {best}\n")
+        arquivo.write(f"Caminho: {sol}\n")
+        arquivo.write(f"Qualidade da solução: {(best/perfectValue):.2f}\n")
+    else:
+        arquivo.write("Resultado Christofides: NA\n")
+        arquivo.write("Caminho: NA\n")
+        arquivo.write("Qualidade da solução: NA\n")
+    arquivo.write(f"Tempo de execução: {execution_time:.2f} segundos\n")  
+    arquivo.write(f"Memória ocupada: {peak / 1024:.2f} KB\n")
+    arquivo.write("-----------------------------------------------------------------\n")
+    
+def readExamplePerfect(name,arquivo):
+    start_time = time.time()
+    tracemalloc.start()
     print(name)
     arquivo.write(f"Problema: {name}\n")
     problem = tsplib95.load(f"exemplos/{name}.tsp")
@@ -14,30 +43,29 @@ def readExampleChristofides(name,perfectValue,arquivo):
     G = G.to_undirected()
     for u,v,data in G.edges(data = True):
         G[u][v]['weight'] = problem.get_weight(u,v)
+        
+    best,sol = bb.branchAndBound(G,start_time) 
     
-    bestC,solC,execution_time,(current,peak) = apx.christofides(G)
-    arquivo.write(f"Resultado Chistofides: {bestC}\n")
-    arquivo.write(f"Caminho:{solC}\n")
-    arquivo.write(f"Tempo de execução: {execution_time:.2f} segundos\n")   
-    arquivo.write(f"Memória atual: {current / 1024:.2f} KB; Pico de memória: {peak / 1024:.2f} KB\n")
-    arquivo.write(f"Qualidade da solução: {bestC/perfectValue}\n")
-    arquivo.write("-----------------------------------------------------------------\n")
+    end_time = time.time()
+    execution_time = end_time - start_time
+    current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()   
     
-def readExamplePerfect(name,arquivo):
-    arquivo.write(f"Problema: {name}\n")
-    problem = tsplib95.load(f"exemplos/{name}.tsp")
-    G = problem.get_graph()
-    G = G.to_undirected()
-    for u,v,data in G.edges(data = True):
-        G[u][v]['weight'] = problem.get_weight(u,v)
-    best,sol,execution_time,(current,peak) = bb.branchAndBound(G) 
-    arquivo.write(f"Resultado branch and bound: {best}\n")
-    arquivo.write(f"Caminho: {sol}\n")
+    if execution_time <= 1800: 
+        arquivo.write(f"Resultado branch and bound: {best}\n")
+        arquivo.write(f"Caminho: {sol}\n")
+        arquivo.write("Qualidade da solução: 1.00\n")
+    else:
+        arquivo.write("Resultado Branch and Bound: NA\n")
+        arquivo.write("Caminho: NA\n")
+        arquivo.write("Qualidade da solução: NA\n")
     arquivo.write(f"Tempo de execução: {execution_time:.2f} segundos\n")  
-    arquivo.write(f"Memória atual: {current / 1024:.2f} KB; Pico de memória: {peak / 1024:.2f} KB\n")
+    arquivo.write(f"Memória ocupada: {peak / 1024:.2f} KB\n")
     arquivo.write("-----------------------------------------------------------------\n")
     
 def readExampleTwiceAroundThree(name,perfectValue,arquivo):
+    start_time = time.time()
+    tracemalloc.start()
     print(name)
     arquivo.write(f"Problema: {name}\n")
     problem = tsplib95.load(f"exemplos/{name}.tsp")
@@ -46,12 +74,23 @@ def readExampleTwiceAroundThree(name,perfectValue,arquivo):
     for u,v,data in G.edges(data = True):
         G[u][v]['weight'] = problem.get_weight(u,v)
                    
-    bestTAT,solTAT,execution_time,(current,peak) = apx.twiceAroundTheTree(G)
-    arquivo.write(f"Resultado twice around three: {bestTAT}\n")
-    arquivo.write(f"Caminho:{solTAT}\n")
-    arquivo.write(f"Tempo de execução: {execution_time:.2f} segundos\n")   
-    arquivo.write(f"Memória atual: {current / 1024:.2f} KB; Pico de memória: {peak / 1024:.2f} KB\n")
-    arquivo.write(f"Qualidade da solução: {bestTAT/perfectValue}\n")
+    best,sol = apx.twiceAroundTheTree(G)
+    
+    end_time = time.time()
+    execution_time = end_time - start_time
+    current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    
+    if execution_time <= 1800: 
+        arquivo.write(f"Resultado Twice Around Three: {best}\n")
+        arquivo.write(f"Caminho: {sol}\n")
+        arquivo.write(f"Qualidade da solução: {(best/perfectValue):.2f}\n")
+    else:
+        arquivo.write("Resultado Twice Around Three: NA\n")
+        arquivo.write("Caminho: NA\n")
+        arquivo.write("Qualidade da solução: NA\n")
+    arquivo.write(f"Tempo de execução: {execution_time:.2f} segundos\n")  
+    arquivo.write(f"Memória ocupada: {peak / 1024:.2f} KB\n")
     arquivo.write("-----------------------------------------------------------------\n")
     
    
@@ -81,6 +120,7 @@ perfectValues = [
     675,  126643,3916,  42080,  36905, 41910,224094,  
     152970,  57201,  64253,234256 ,  239297, 336556
 ]
+
 #"brd14051" 469385
 #"rl11849"  923288
 #"usa13509" 19982859
@@ -93,19 +133,20 @@ perfectValues = [
 #"rl5915" 565530
 #"rl5934" 556045
 
-with open('Twice_Around_Three.txt', 'w') as arquivo:
-    for i in range(0,len(names )):
+for i in range(0,len(names )):
+    with open('Twice_Around_Three.txt', 'a') as arquivo:
         readExampleTwiceAroundThree(names[i],perfectValues[i],arquivo)
 
-with open('Christofides.txt', 'w') as arquivo:
-    for i in range(0,len(names )):
+for i in range(0,len(names )):
+    with open('Christofides.txt', 'a') as arquivo:
         readExampleChristofides(names[i],perfectValues[i],arquivo)
-               
+              
 """
-with open('Branch_and_Bound.txt', 'w') as arquivo:
-    for i in range(0,len(names )):
+for i in range(0,len(names )):
+    with open('Branch_and_Bound.txt', 'a') as arquivo:
         readExamplePerfect(names[i],arquivo)
-
+"""
+"""
 G = nx.complete_graph(range(1,6))
 pesos = [4,8,9,12,6,8,9,10,11,7]
 position = 0

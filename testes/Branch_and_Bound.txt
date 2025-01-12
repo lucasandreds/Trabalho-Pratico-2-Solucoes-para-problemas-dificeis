@@ -1,0 +1,21 @@
+Problema: a280
+Resultado Branch and Bound: NA
+Caminho: NA
+Qualidade da solução: NA
+Tempo de execução: 1800.31 segundos
+Memória ocupada: 48816.77 KB
+-----------------------------------------------------------------
+Problema: berlin52
+Resultado Branch and Bound: NA
+Caminho: NA
+Qualidade da solução: NA
+Tempo de execução: 1800.00 segundos
+Memória ocupada: 919.15 KB
+-----------------------------------------------------------------
+Problema: bier127
+Resultado Branch and Bound: NA
+Caminho: NA
+Qualidade da solução: NA
+Tempo de execução: 1800.01 segundos
+Memória ocupada: 7942.62 KB
+-----------------------------------------------------------------

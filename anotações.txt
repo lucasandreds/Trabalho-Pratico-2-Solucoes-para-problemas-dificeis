@@ -12,5 +12,8 @@ c(u,v) = 0 sse u = v
 c(u,v) = c(v,u)
 c(u,v) ≤ c(u,w) + c(w,v)
 
+Heuristica de inferior: MST
+Vizinho mais proximo
+Christofides
 
 
