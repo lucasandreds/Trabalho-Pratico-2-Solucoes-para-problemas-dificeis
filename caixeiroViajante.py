@@ -140,11 +140,11 @@ for i in range(0,len(names )):
 for i in range(0,len(names )):
     with open('Christofides.txt', 'a') as arquivo:
         readExampleChristofides(names[i],perfectValues[i],arquivo)
-              
-"""
+"""           
 for i in range(0,len(names )):
     with open('Branch_and_Bound.txt', 'a') as arquivo:
         readExamplePerfect(names[i],arquivo)
+
 """
 """
 G = nx.complete_graph(range(1,6))

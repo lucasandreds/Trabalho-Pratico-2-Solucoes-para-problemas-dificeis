@@ -1,19 +1,6 @@
-Objetivo: Podar caminhos mais longo
+Conferir Chistofides que está gerando erro
 
-Limiar: as somas das duas arestas de menor peso incidentes em cada vértice dividido por 2, teto
-
-Ai o algoritmo funciona estilo branch and bound, começa do ponto inicial com uma estimatida das distancia, vai andando na arvore e iliminando os piores
-
-
-Euclidiana obedece isso: 
-
-c(u,v) ≥ 0
-c(u,v) = 0 sse u = v
-c(u,v) = c(v,u)
-c(u,v) ≤ c(u,w) + c(w,v)
-
-Heuristica de inferior: MST
-Vizinho mais proximo
-Christofides
+Procurar soluções para o branch and bound que não está funcionando para nenhum caso
+	-Testar possibilidade de retirar as divisões por 2
 
 
