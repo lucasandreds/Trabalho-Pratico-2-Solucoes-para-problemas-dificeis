@@ -1,39 +1,28 @@
 import heapq
-import numpy as np
 import time
 import approximation as apx
+import numpy as np
+import networkx as nx
 
-def calculateBound(G):
-    sum = 0
-    menores = []
+def calculateBound(matrizAdjacencia):
     
-    for node in G.nodes():
-        min = np.inf
-        secondMin =np.inf
-        
-    for node in G.nodes():
-        weights = [G[node][neighbor]['weight'] for neighbor in G.neighbors(node)]
-        if len(weights) > 1:
-            min, secondMin = sorted(weights)[:2]
-        elif weights:
-            min, secondMin = weights[0], weights[0]
-        else:
-            min, secondMin = 0, 0
-        sum = sum + min + secondMin
-        menores.append((min,secondMin))
+    menores=  np.sort(matrizAdjacencia, axis=1)[:, :2]
+    sum = menores.sum()
     return sum,menores
 
-def atualizarBound(G,bound,elements,menores):
+def atualizarBound(matrizAdjacencia,bound,elements,menores):
+    
     elementoAntecessor = elements[-2]
     ultimoElemento = elements[-1]
-    novaAresta = G[elementoAntecessor][ultimoElemento]['weight']
+    novaAresta = matrizAdjacencia[elementoAntecessor-1][ultimoElemento-1]
     
     menorPrimeiro = menores[elementoAntecessor-1]
     menorSegundo = menores[ultimoElemento-1]
     
+
     if len(elements) > 2:
         prev = elements[-3]
-        if menorPrimeiro[0] == G[elementoAntecessor][prev]['weight']:
+        if menorPrimeiro[0] == matrizAdjacencia[elementoAntecessor - 1, prev - 1]:
             bound = bound - menorPrimeiro[1] + novaAresta
         else:
             bound = bound - menorPrimeiro[0] + novaAresta
@@ -43,51 +32,59 @@ def atualizarBound(G,bound,elements,menores):
     
     if novaAresta != menorSegundo[0]:
         bound = bound - menorSegundo[1] + novaAresta
-    
+
     return bound
 
 def branchAndBound(G,start_time):
     tamanho = G.number_of_nodes()
-
-    sum,menores = calculateBound(G)
-    root = (tamanho,sum,0,[1],0)
-    
-    #pq = []
-    #heapq.heappush(pq,root)
-    
-    stack = [root]
     
     best,sol = apx.christofides(G)
+    best = np.inf
+    sol = []
     
-    #while pq:
-    while stack:
-        currentBound, nivel, cost, elements, visitedNode = stack.pop()
-        #nivel, currentBound, cost, elements, visitedNode = heapq.heappop(pq)
+    matrizAdjacencia = nx.to_numpy_array(G)
+    np.fill_diagonal(matrizAdjacencia, np.inf)
+    
+    sum,menores = calculateBound(matrizAdjacencia)
+ 
+    root = (sum,tamanho,0,0,[1])
+    
+    pq = []
+    heapq.heappush(pq,root)
+    
+    #stack = [root]
+
+    while pq:
+    #while stack:
+        #currentBound, nivel, cost, elements, visitedNode = stack.pop()
+        currentBound, nivel, cost, visitedNode,elements = heapq.heappop(pq)
         if nivel == 0:
-            if cost < best:
-                best = cost
+            if (cost*2) < best:
+                best = cost * 2
                 sol = elements 
-        elif (currentBound + 1)//2 < best:
+        elif currentBound < best:
             if nivel > 1:
-                for k in range(2,G.number_of_nodes()+1):
+                for k in range(2,tamanho+1):
                     if not visitedNode & (1 << (k - 1)):
-                        bound = atualizarBound(G,currentBound, elements + [k],menores)
-                        if (bound + 1)//2 < best:
+                        bound = atualizarBound(matrizAdjacencia,currentBound, elements + [k],menores)
+                        if bound < best:
                             newVisited = visitedNode | (1 << (k - 1))
-                            stack.append((bound, nivel + 1, cost + G[elements[-1]][k]['weight'], elements + [k], newVisited))
-                            #heapq.heappush(pq, (nivel + -1, bound, cost + G[elements[-1]][k]['weight'] , elements + [k],newVisited))
+                            #stack.append((bound, nivel + 1, cost + G[elements[-1]][k]['weight'], elements + [k], newVisited))
+                            heapq.heappush(pq, (bound, nivel - 1, cost + matrizAdjacencia[elements[-1] - 1, k - 1], newVisited,elements + [k]))
             else:
-                bound = atualizarBound(G,currentBound, elements + [elements[0]],menores)
-                if (bound + 1)//2 < best:
-                    stack.append(bound, nivel + 1, cost + G[elements[-1]][elements[0]]['weight'] , elements + [elements[0]] ,visitedNode)
-                    #heapq.heappush(pq, (nivel - 1,bound, cost + G[elements[-1]][elements[0]]['weight'] , elements + [elements[0]] ,visitedNode))
-        if (time.time() - start_time) > 1800:
-            print("Tempo limite atingido. Finalizando sem resultado")
+                bound = atualizarBound(matrizAdjacencia,currentBound, elements + [elements[0]],menores)
+                if bound < best:
+                    #stack.append(bound, nivel + 1, cost + G[elements[-1]][elements[0]]['weight'] , elements + [elements[0]] ,visitedNode)
+                    heapq.heappush(pq, (bound, nivel - 1, cost + matrizAdjacencia[elements[-1] - 1, elements[0] - 1], visitedNode,elements + [elements[0]]))
+        else:
             break
-        
-    print((nivel, currentBound, cost, elements, visitedNode))
-                    
-    return best,sol
+        if len(pq) > 2000000:
+            pq = heapq.nsmallest(1000000, pq)
+        if (time.time() - start_time) > 1800:
+            print("Tempo excedido")
+            break
+
+    return (best // 2),sol
                 
                     
             

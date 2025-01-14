@@ -3,6 +3,7 @@ import approximation as apx
 import tsplib95
 import time
 import tracemalloc
+import networkx as nx
 
 def readExampleChristofides(name,perfectValue,arquivo):
     print(name)
@@ -133,6 +134,7 @@ perfectValues = [
 #"rl5915" 565530
 #"rl5934" 556045
 
+"""
 for i in range(0,len(names )):
     with open('Twice_Around_Three.txt', 'a') as arquivo:
         readExampleTwiceAroundThree(names[i],perfectValues[i],arquivo)
@@ -140,7 +142,10 @@ for i in range(0,len(names )):
 for i in range(0,len(names )):
     with open('Christofides.txt', 'a') as arquivo:
         readExampleChristofides(names[i],perfectValues[i],arquivo)
-"""           
+"""
+with open('Branch_and_Bound.txt', 'a') as arquivo:
+    readExamplePerfect("z",arquivo)  
+"""
 for i in range(0,len(names )):
     with open('Branch_and_Bound.txt', 'a') as arquivo:
         readExamplePerfect(names[i],arquivo)
@@ -154,14 +159,10 @@ for u, v in G.edges():
     G[u][v]['weight'] = pesos[position]
     position+=1
     
-bestTAT,solTAT,execution_time = apx.twiceAroundTheTree(G)  
-print(f"Resultado twice around three: {bestTAT} {solTAT}")
-print(f"Tempo de execução: {execution_time} segundos")  
-bestC,solC,execution_time = apx.christofides(G)  
-print(f"Resultado Chistofides: {bestC} {solC}")
-print(f"Tempo de execução: {execution_time} segundos")  
-best,sol,execution_time,(current,peak) = bb.branchAndBound(G) 
+bestTAT,solTAT = apx.twiceAroundTheTree(G)  
+print(f"Resultado twice around three: {bestTAT} {solTAT}") 
+bestC,solC= apx.christofides(G)  
+print(f"Resultado Chistofides: {bestC} {solC}")  
+best,sol = bb.branchAndBound(G,time.time()) 
 print(f"Resultado branch and bound: {best} {sol}")
-print(f"Tempo de execução: {execution_time} segundos")  
-print(f"Memória atual: {current / 1024:.2f} KB; Pico de memória: {peak / 1024:.2f} KB")
 """
