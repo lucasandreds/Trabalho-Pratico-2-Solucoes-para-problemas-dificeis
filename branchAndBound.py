@@ -39,8 +39,7 @@ def branchAndBound(G,start_time):
     tamanho = G.number_of_nodes()
     
     best,sol = apx.christofides(G)
-    best = np.inf
-    sol = []
+    best = best * 2
     
     matrizAdjacencia = nx.to_numpy_array(G)
     np.fill_diagonal(matrizAdjacencia, np.inf)

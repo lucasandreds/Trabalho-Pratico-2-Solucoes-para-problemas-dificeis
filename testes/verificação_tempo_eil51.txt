@@ -1,0 +1,18 @@
+Wed Jan 15 02:36:13 2025    resultados.prof
+
+         216753233 function calls (216731138 primitive calls) in 1807.475 seconds
+
+   Ordered by: internal time
+   List reduced from 270 to 10 due to restriction <10>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1  910.744  910.744 1800.019 1800.019 branchAndBound.py:38(branchAndBound)
+ 68601477  381.552    0.000  386.313    0.000 branchAndBound.py:13(atualizarBound)
+       63  237.506    3.770  237.506    3.770 heapq.py:490(<listcomp>)
+       63  134.507    2.135  134.507    2.135 {method 'sort' of 'list' objects}
+ 67200000   27.398    0.000   27.398    0.000 {built-in method _heapq.heappush}
+       63   25.187    0.400   25.187    0.400 {built-in method _heapq._heapify_max}
+       63   24.889    0.395   24.889    0.395 heapq.py:503(<listcomp>)
+  4242977   24.860    0.000   24.860    0.000 {built-in method _heapq._heapreplace_max}
+       63   15.200    0.241  462.149    7.336 heapq.py:463(nsmallest)
+  2597375   11.857    0.000   11.857    0.000 {built-in method _heapq.heappop}

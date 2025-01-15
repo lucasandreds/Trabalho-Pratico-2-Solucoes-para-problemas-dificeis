@@ -1,6 +1,0 @@
-Conferir Chistofides que está gerando erro
-
-Procurar soluções para o branch and bound que não está funcionando para nenhum caso
-	-Testar possibilidade de retirar as divisões por 2
-
-
