@@ -236,8 +236,5 @@ def main():
         arquivo.write(output)
         arquivo.write("\n")
         arquivo.write("-" * len(output.split("\n")[0]))
-      
-        
-        
         
 main()
