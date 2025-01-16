@@ -32,7 +32,7 @@ def readExampleChristofides(name,perfectValue):
         
     return best,qualidade,tempo,espaco
     
-def readExamplePerfect(name):
+def readExamplePerfect(name,perfectValue):
     start_time = time.time()
     tracemalloc.start()
     print(name)
@@ -50,7 +50,7 @@ def readExamplePerfect(name):
     tracemalloc.stop()   
     
     if execution_time <= 1800: 
-        qualidade = "1.0"
+        qualidade = f"{(best/perfectValue):.2f}"
     else:
         best = "NA"
         qualidade = "NA"
@@ -160,7 +160,7 @@ def main():
         index_names=False
     )
 
-    with open('Twice_Around_Three.txt', 'a') as arquivo:
+    with open('Twice_Around_Three.txt', 'w') as arquivo:
         arquivo.write("-" * len(output.split("\n")[0]))
         arquivo.write("\n")
         arquivo.write(output)
@@ -168,7 +168,7 @@ def main():
         arquivo.write("-" * len(output.split("\n")[0]))
         
     """
-        
+    """   
     bests = []
     qualidades = []
     espacos = []
@@ -196,12 +196,14 @@ def main():
         index_names=False
     )
               
-    with open('Christofides.txt', 'a') as arquivo:
+    with open('Christofides.txt', 'w') as arquivo:
         arquivo.write("-" * len(output.split("\n")[0]))
         arquivo.write("\n")
         arquivo.write(output)
         arquivo.write("\n")
         arquivo.write("-" * len(output.split("\n")[0]))
+        
+    """
         
     bests = []
     qualidades = []
@@ -209,7 +211,7 @@ def main():
     tempos = []
         
     for i in range(0,len(names )):
-        best,qualidade,tempo,espaco = readExamplePerfect(names[i],arquivo)
+        best,qualidade,tempo,espaco = readExamplePerfect(names[i],perfectValues)
         bests.append(best)
         qualidades.append(qualidade)
         espacos.append(espaco)
@@ -230,7 +232,7 @@ def main():
         index_names=False
     )
               
-    with open('Branch and Bound.txt', 'a') as arquivo:
+    with open('Branch and Bound.txt', 'w') as arquivo:
         arquivo.write("-" * len(output.split("\n")[0]))
         arquivo.write("\n")
         arquivo.write(output)

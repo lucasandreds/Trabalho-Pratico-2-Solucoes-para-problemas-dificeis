@@ -57,6 +57,7 @@ def branchAndBound(G,start_time):
     #while stack:
         #currentBound, nivel, cost, elements, visitedNode = stack.pop()
         currentBound, nivel, cost, visitedNode,elements = heapq.heappop(pq)
+        
         if nivel == 0:
             if (cost*2) < best:
                 best = cost * 2
@@ -78,7 +79,8 @@ def branchAndBound(G,start_time):
         else:
             break
         if len(pq) > 2000000:
-            pq = heapq.nsmallest(1000000, pq)
+            pq = heapq.nsmallest(1000000, pq, key = lambda x:x[1])
+            heapq.heapify(pq)
         if (time.time() - start_time) > 1800:
             print("Tempo excedido")
             break
