@@ -78,8 +78,8 @@ def branchAndBound(G,start_time):
                     heapq.heappush(pq, (bound, nivel - 1, cost + matrizAdjacencia[elements[-1] - 1, elements[0] - 1], visitedNode,elements + [elements[0]]))
         else:
             break
-        if len(pq) > 2000000:
-            pq = heapq.nsmallest(1000000, pq, key = lambda x:x[1])
+        if len(pq) > 1500000:
+            pq = heapq.nsmallest(700000, pq, key = lambda x:x[1])
             heapq.heapify(pq)
         if (time.time() - start_time) > 1800:
             print("Tempo excedido")

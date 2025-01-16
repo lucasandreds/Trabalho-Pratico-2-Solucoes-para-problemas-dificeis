@@ -4,6 +4,7 @@ import tsplib95
 import time
 import tracemalloc
 import pandas as pd
+import numpy as np
 
 def readExampleChristofides(name,perfectValue):
     print(name)
@@ -78,7 +79,7 @@ def readExampleTwiceAroundThree(name,perfectValue):
     tracemalloc.stop()
     
     if execution_time <= 1800: 
-        qualidade = f"{(best/perfectValue):.2f}"
+        qualidade = f"{str((best/perfectValue)):.2f}"
     else:
         best = "NA"
         qualidade = "NA"
@@ -211,32 +212,34 @@ def main():
     tempos = []
         
     for i in range(0,len(names )):
-        best,qualidade,tempo,espaco = readExamplePerfect(names[i],perfectValues)
+        best,qualidade,tempo,espaco = readExamplePerfect(names[i],perfectValues[i])
         bests.append(best)
         qualidades.append(qualidade)
         espacos.append(espaco)
         tempos.append(tempo)
         
-    dados = {
-        "Distancia": bests,
-        "Qualidade da Solução": qualidades,
-        "Tempo de Execução": tempos,
-        "Espaço Gasto": espacos,
-    }
+        dados = {
+            "Distancia": bests,
+            "Qualidade da Solução": qualidades,
+            "Tempo de Execução": tempos,
+            "Espaço Gasto": espacos,
+        }
 
-    tabela = pd.DataFrame(dados, index=names)
-    
-    output = tabela.to_string(
-        col_space=15,  
-        justify="center",  
-        index_names=False
-    )
-              
-    with open('Branch and Bound.txt', 'w') as arquivo:
-        arquivo.write("-" * len(output.split("\n")[0]))
-        arquivo.write("\n")
-        arquivo.write(output)
-        arquivo.write("\n")
-        arquivo.write("-" * len(output.split("\n")[0]))
+        tabela = pd.DataFrame(dados, index=names)
+        
+        output = tabela.to_string(
+            col_space=15,  
+            justify="center",  
+            index_names=False
+        )
+        
+                  
+        with open('Branch and Bound.txt', 'a') as arquivo:
+            arquivo.write("-" * len(output.split("\n")[0]))
+            arquivo.write("\n")
+            arquivo.write(output)
+            arquivo.write("\n")
+            arquivo.write("-" * len(output.split("\n")[0]))
+
         
 main()
