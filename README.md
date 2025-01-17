@@ -1,1 +1,0 @@
-# Trabalho-Pratico-2-Solucoes-para-problemas-dificeis
