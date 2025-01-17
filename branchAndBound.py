@@ -50,12 +50,8 @@ def branchAndBound(G,start_time):
     
     pq = []
     heapq.heappush(pq,root)
-    
-    #stack = [root]
 
     while pq:
-    #while stack:
-        #currentBound, nivel, cost, elements, visitedNode = stack.pop()
         currentBound, nivel, cost, visitedNode,elements = heapq.heappop(pq)
         
         if nivel == 0:
@@ -69,12 +65,10 @@ def branchAndBound(G,start_time):
                         bound = atualizarBound(matrizAdjacencia,currentBound, elements + [k],menores)
                         if bound < best:
                             newVisited = visitedNode | (1 << (k - 1))
-                            #stack.append((bound, nivel + 1, cost + G[elements[-1]][k]['weight'], elements + [k], newVisited))
                             heapq.heappush(pq, (bound, nivel - 1, cost + matrizAdjacencia[elements[-1] - 1, k - 1], newVisited,elements + [k]))
             else:
                 bound = atualizarBound(matrizAdjacencia,currentBound, elements + [elements[0]],menores)
                 if bound < best:
-                    #stack.append(bound, nivel + 1, cost + G[elements[-1]][elements[0]]['weight'] , elements + [elements[0]] ,visitedNode)
                     heapq.heappush(pq, (bound, nivel - 1, cost + matrizAdjacencia[elements[-1] - 1, elements[0] - 1], visitedNode,elements + [elements[0]]))
         else:
             break
